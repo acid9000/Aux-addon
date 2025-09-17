@@ -1,5 +1,7 @@
 module 'aux.core.tooltip'
 
+--  Fork created 20250917: This fork pulls the new calculation values from history.lua, adds a new tooltip line for minimum daiily buyout + 10%, and rephrases the tooltip line "value" to "11day avg" for clarity. The overall goal here was to have more timely/accurate AH prices in tooltips and for other add-ons (e.g. Artisan's reagent costs).
+
 local T = require 'T'
 local aux = require 'aux'
 local info = require 'aux.util.info'
@@ -93,11 +95,15 @@ function M.extend_tooltip(tooltip, link, quantity)
     local value = history.value(item_key)
     if auctionable then
         if settings.value then
-            tooltip:AddLine('|cFFFFFFFFValue:|r ' .. (value and money.to_string(value * quantity) or UNKNOWN), {r=1, g=1, b=1})
+			--  Patched 20250914: "Value" wording makes no sense, so rephrased it to reflect what it actually is, the eleven-day moving average of an item's price on the AH.
+            tooltip:AddLine('|cFFFFFFFF11day Avg:|r ' .. (value and money.to_string(value * quantity) or UNKNOWN), {r=1, g=1, b=1})
         end
         if settings.daily then
             local market_value = history.market_value(item_key)
             tooltip:AddLine('Today: ' .. (market_value and money.to_string(market_value * quantity) .. ' (' .. gui.percentage_historical(aux.round(market_value / value * 100)) .. ')' or UNKNOWN), {r=1, g=1, b=1})
+			-- Added 20250914: created the below local record "avg" to display a new line in the tooltip if "daily" is set to TRUE/on. This value takes the daily minimum buyout and multiplies it by 1.1 (10% price increase) to give the user a more accurate and timely item price.
+			local avg = history.avg(item_key)
+            tooltip:AddLine('Min +10%: ' .. (avg and money.to_string(avg * quantity) .. ' (' .. gui.percentage_historical(aux.round(avg / value * 100)) .. ')' or UNKNOWN), {r=1, g=1, b=1})        
         end
     end
 
