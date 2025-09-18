@@ -1,6 +1,7 @@
 Changelog (for those who don't dig into reading all the commits):
 
 20250917 /core/history.lua: This fork reworks the calculations for item cost and record storage. The overall goal here was to have more timely/accurate AH prices in tooltips and for other add-ons (e.g. Artisan's reagent costs).
+
 20250917 /core/tooltip.lua: This fork pulls the new calculation values from history.lua, adds a new tooltip line for minimum daiily buyout + 10%, and rephrases the tooltip line "value" to "11day avg" for clarity. The overall goal here was to have more timely/accurate AH prices in tooltips and for other add-ons (e.g. Artisan's reagent costs).
 
 -----------------------------------------------------
