@@ -24,18 +24,19 @@ function aux.handle.LOAD2()
 	data = aux.faction_data.history
 end
 
+-- Commented out 20251231: This section was causing pricing issues and crashes on logout. Need to figure out a separate event or why it's erroring.
 -- Added 20250914: Reset item records on logout. This is what makes the "Today min" and "Today +10%" values in tooltip.lua much more accurate.
-local resetFrame = CreateFrame("Frame")
-resetFrame:RegisterEvent("PLAYER_LOGOUT")
-resetFrame:SetScript("OnEvent", function()
-	for item_key, raw in pairs(data) do
-		local record = persistence.read(history_schema, raw)
-		record.daily_sum = nil
-		record.daily_count = nil
-		record.daily_min_buyout = nil
-		write_record(item_key, record)
-	end
-end)
+-- local resetFrame = CreateFrame("Frame")
+-- resetFrame:RegisterEvent("PLAYER_LOGOUT")
+-- resetFrame:SetScript("OnEvent", function()
+-- 	for item_key, raw in pairs(data) do
+-- 		local record = persistence.read(history_schema, raw)
+-- 		record.daily_sum = nil
+-- 		record.daily_count = nil
+-- 		record.daily_min_buyout = nil
+-- 		write_record(item_key, record)
+-- 	end
+-- end)
 
 do
 	local next_push = 0
@@ -184,6 +185,17 @@ function M.market_value(item_key)
 end
 
 -- Removed 20250914: Removed the entire weighting section because: 1. I couldn't figure it out, 2. removing it didn't seem to negatively impact the changes made above.
+-- Re-added 20251231: weighted_median section moved from below function item_key to above. I don't remember why I did this in October (on my personal drive), sorry!
+function weighted_median(list)
+	sort(list, function(a,b) return a.value < b.value end)
+	local weight = 0
+	for _, v in ipairs(list) do
+		weight = weight + v.weight
+		if weight >= .5 then
+			return v.value
+		end
+	end
+end
 
 --  Added 20250914: patched to add callable function 'avg', used in tooltip.lua to display current average AH price of item. This can also be used to call from other addons, such as Artisan, to have more current and somewhat accurate prices on reagent cost estimates.
 function M.avg(item_key)
@@ -197,17 +209,6 @@ function M.avg(item_key)
 	return ((item_record.daily_min_buyout or 0)*1.1)
 	-- Note 20250914: same as note above, keeping the below dashed command for posterity and experimentation.
 -- 	return (item_record.daily_sum or 0) / (item_record.daily_count or 1) -- adding "or 0" and "or 1" patches error of nil value for non-AH items (such as Blood of Heroes).
-end
-
-function weighted_median(list)
-	sort(list, function(a,b) return a.value < b.value end)
-	local weight = 0
-	for _, v in ipairs(list) do
-		weight = weight + v.weight
-		if weight >= .5 then
-			return v.value
-		end
-	end
 end
 
 --  Added 20250914: patched push_record to store average instead of only min
