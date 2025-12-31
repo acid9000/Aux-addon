@@ -88,6 +88,7 @@ function M.extend_tooltip(tooltip, link, quantity)
         end
         if price ~= 0 then
             tooltip:AddLine(aux.color.tooltip.merchant('Vendor:') .. ' ' .. (price and money.to_string(price * quantity) or UNKNOWN), {r=1, g=1, b=1})
+		end
     end
     local auctionable = not item_info or info.auctionable(T.temp-info.tooltip('link', item_info.itemstring), item_info.quality)
     local item_key = (item_id or 0) .. ':' .. (suffix_id or 0)
