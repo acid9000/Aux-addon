@@ -1,7 +1,7 @@
 module 'aux.core.tooltip'
 
 --  Fork created 20250917: This fork pulls the new calculation values from history.lua, adds a new tooltip line for minimum daiily buyout + 10%, and rephrases the tooltip line "value" to "11day avg" for clarity. The overall goal here was to have more timely/accurate AH prices in tooltips and for other add-ons (e.g. Artisan's reagent costs).
-
+--  Changes 20251231: Changing Disenchant value and info to dark purple and vendor value to brown. Copied from @Bestoriop's pull request to @Nelethor's master project in September, but still unapproved.
 local T = require 'T'
 local aux = require 'aux'
 local info = require 'aux.util.info'
@@ -59,7 +59,7 @@ function M.extend_tooltip(tooltip, link, quantity)
         local distribution = disenchant.distribution(item_info.slot, item_info.quality, item_info.level, item_id)
         if getn(distribution) > 0 then
             if settings.disenchant_distribution then
-                tooltip:AddLine('Disenchants into:', {r=1, g=1, b=1})
+                tooltip:AddLine(aux.color.darkpurple('Disenchants into:'), {r=1, g=1, b=1}) -- Changed 20251231: Copied from @bestoriop's pull request to @nelethor's master project.
                 sort(distribution, function(a,b) return a.probability > b.probability end)
                 for _, event in ipairs(distribution) do
                     tooltip:AddLine(format('  %s%% %s (%s-%s)', event.probability * 100, info.display_name(event.item_id, true) or 'item:' .. event.item_id, event.min_quantity, event.max_quantity), {r=1, g=1, b=1})
@@ -67,14 +67,14 @@ function M.extend_tooltip(tooltip, link, quantity)
             end
             if settings.disenchant_value then
                 local disenchant_value = disenchant.value(item_info.slot, item_info.quality, item_info.level, item_id)
-                tooltip:AddLine('Disenchant: ' .. (disenchant_value and money.to_string(disenchant_value) or UNKNOWN), {r=1, g=1, b=1})
+                tooltip:AddLine(aux.color.darkpurple('Disenchant:') .. ' ' .. (disenchant_value and money.to_string(disenchant_value) or UNKNOWN), {r=1, g=1, b=1})
             end
         end
     end
     if settings.merchant_buy then
         local _, price, limited = info.merchant_info(item_id)
         if price then
-            tooltip:AddLine('Vendor Buy ' .. (limited and '(limited): ' or ': ') .. money.to_string(price * quantity), {r=1, g=1, b=1})
+            tooltip:AddLine(aux.color.tooltip.merchant('Vendor Buy' .. (limited and ' (limited):' or ':')) .. ' ' .. money.to_string(price * quantity), {r=1, g=1, b=1})
         end
     end
     if settings.merchant_sell then
@@ -87,8 +87,7 @@ function M.extend_tooltip(tooltip, link, quantity)
             price = ShaguTweaks.SellValueDB[item_id] / charges
         end
         if price ~= 0 then
-            tooltip:AddLine('Vendor: ' .. (price and money.to_string(price * quantity) or UNKNOWN), {r=1, g=1, b=1})
-        end
+            tooltip:AddLine(aux.color.tooltip.merchant('Vendor:') .. ' ' .. (price and money.to_string(price * quantity) or UNKNOWN), {r=1, g=1, b=1})
     end
     local auctionable = not item_info or info.auctionable(T.temp-info.tooltip('link', item_info.itemstring), item_info.quality)
     local item_key = (item_id or 0) .. ':' .. (suffix_id or 0)
