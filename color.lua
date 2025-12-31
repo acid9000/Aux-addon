@@ -46,6 +46,7 @@ M.color = immutable-{
 	red = C(255, 0, 0, 1),
 	gray = C(187, 187, 187, 1),
 	gold = C(255, 255, 154, 1),
-
+	darkpurple = C(153, 51, 255, 1),
+	
 	blizzard = C(0, 180, 255, 1),
 }
