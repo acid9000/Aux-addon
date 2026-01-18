@@ -1,4 +1,8 @@
-![image]
+Revised, more accurate pricing tooltips:
+Base tooltip when hovering over item:
+![image](https://github.com/acid9000/Aux-addon/blob/master/Tooltip-Example.png)
+Base tooltip when hovering over item and pressing SHIFT key:
+![image](https://github.com/acid9000/Aux-addon/blob/master/Tooltip-Example-ItemStack.png)
 
 Changelog (for those who don't dig into reading all the commits):
 
