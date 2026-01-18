@@ -2,6 +2,8 @@ module 'aux.core.tooltip'
 
 --  Fork created 20250917: This fork pulls the new calculation values from history.lua, adds a new tooltip line for minimum daiily buyout + 10%, and rephrases the tooltip line "value" to "11day avg" for clarity. The overall goal here was to have more timely/accurate AH prices in tooltips and for other add-ons (e.g. Artisan's reagent costs).
 --  Changes 20251231: Changing Disenchant value and info to dark purple and vendor value to brown. Copied from @Bestoriop's pull request to @Nelethor's master project in September, but still unapproved.
+--  Changes 20260118: Cleaning up errors that created astronomical prices.
+
 local T = require 'T'
 local aux = require 'aux'
 local info = require 'aux.util.info'
@@ -53,7 +55,7 @@ end
 
 function M.extend_tooltip(tooltip, link, quantity)
     local item_id, suffix_id = info.parse_link(link)
-    quantity = IsShiftKeyDown() and quantity or 1
+    local quantity = IsShiftKeyDown() and quantity or 1
     local item_info = T.temp-info.item(item_id)
     if item_info then
         local distribution = disenchant.distribution(item_info.slot, item_info.quality, item_info.level, item_id)
@@ -99,7 +101,7 @@ function M.extend_tooltip(tooltip, link, quantity)
             tooltip:AddLine('|cFFFFFFFF11day Avg:|r ' .. (value and money.to_string(value * quantity) or UNKNOWN), {r=1, g=1, b=1})
         end
         if settings.daily then
-            local market_value = history.market_value(item_key)
+            local market_value = history.market_value(item_key) or value
             tooltip:AddLine('Today: ' .. (market_value and money.to_string(market_value * quantity) .. ' (' .. gui.percentage_historical(aux.round(market_value / value * 100)) .. ')' or UNKNOWN), {r=1, g=1, b=1})
 			-- Added 20250914: created the below local record "avg" to display a new line in the tooltip if "daily" is set to TRUE/on. This value takes the daily minimum buyout and multiplies it by 1.1 (10% price increase) to give the user a more accurate and timely item price.
 			local avg = history.avg(item_key)
