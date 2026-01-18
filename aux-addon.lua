@@ -1,5 +1,7 @@
 module 'aux'
 
+--  Changes 20260118: Modified default tooltips to show this fork's additions by default. Should be easier for the end user instead of them needing to manually add them using in-game commands.
+
 local T = require 'T'
 local post = require 'aux.tabs.post'
 
@@ -73,11 +75,11 @@ function handle.LOAD()
         M.character_data = assign(aux.character[key], {
             tooltip = {
                 value = true,
-                merchant_sell = false,
+                merchant_sell = true,
                 merchant_buy = false,
-                daily = false,
-                disenchant_value = false,
-                disenchant_distribution = false,
+                daily = true,
+                disenchant_value = true,
+                disenchant_distribution = true,
             }
         })
     end
