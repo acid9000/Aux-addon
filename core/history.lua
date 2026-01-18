@@ -1,7 +1,8 @@
 module 'aux.core.history'
---  Fork created 20250917: This fork reworks the calculations for item cost and record storage. The overall goal here was to have more timely/accurate AH prices in tooltips and for other add-ons (e.g. Artisan's reagent costs).
 
+--  Fork created 20250917: This fork reworks the calculations for item cost and record storage. The overall goal here was to have more timely/accurate AH prices in tooltips and for other add-ons (e.g. Artisan's reagent costs).
 --  Added 20250914: Big thanks to Sedin from Even Better for all the coding help!
+--  Changes 20260118: Cleaning up errors that created astronomical prices.
 
 local T = require 'T'
 local aux = require 'aux'
@@ -136,7 +137,7 @@ function M.process_auction(auction_record, pages)
 
 		-- Old note: share data if enabled
 		if aux.account_data.sharing == true then
-		-- Note 20250914: dashed out below argument so enable all AH queries being shared, regardless of page count. If for some reason your game becomes stuttery/"laggy" when doing a massive AH query, removed the "--" at the start of the below line and its respective "end" line further below.
+--		-- Note 20250914: dashed out below argument to enable all AH queries being shared, regardless of page count. If for some reason your game becomes stuttery/"laggy" when doing a massive AH query, removed the "--" at the start of the below line and its respective "end" line further below.
 --			if pages < 15 then -- only full scans
 				if GetChannelName("LFT") ~= 0 then
 					ChatThrottleLib:SendChatMessage(
@@ -181,7 +182,7 @@ end
 
 function M.market_value(item_key)
 	local item_record = read_record(item_key)
-	return item_record.daily_min_buyout
+	return item_record.daily_min_buyout -- Note 20260118: If there are no past price records this will return some crazy value (e.g. a 40silver gray item will show as 24gold)
 end
 
 -- Removed 20250914: Removed the entire weighting section because: 1. I couldn't figure it out, 2. removing it didn't seem to negatively impact the changes made above.
