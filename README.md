@@ -1,4 +1,10 @@
+![image]
+
 Changelog (for those who don't dig into reading all the commits):
+
+20260118 /core/history.lua, /core/tooltip.lua: Minor tweaks to limit chances of items showing incorrect, astronomical values when the item has no auction price history.
+
+20260118 aux-addon.lua: Changed default tooltip lines to include lines "Today", "Min +10%", disenchant breakout, and disenchant value, by default.
 
 20250917 /core/history.lua: This fork reworks the calculations for item cost and record storage. The overall goal here was to have more timely/accurate AH prices in tooltips and for other add-ons (e.g. Artisan's reagent costs).
 
